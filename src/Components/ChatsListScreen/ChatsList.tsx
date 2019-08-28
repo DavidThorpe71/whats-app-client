@@ -1,4 +1,4 @@
-import React, { FC, useState, useMemo } from "react";
+import React, { FC } from "react";
 import moment from 'moment';
 import styled from 'styled-components';
 import { Comment, List, Tooltip, Avatar } from 'antd';
@@ -24,9 +24,20 @@ const GET_CHATS_QUERY = gql`
     }
   }
 `;
+interface GetChatsData {
+  chats: {
+    image: string,
+    picture: string,
+    name: string,
+    lastMessage: {
+      content: string,
+      createdAt: Date
+    }
+  }[]
+}
 
 const ChatsList: FC = () => {
-  const {loading, error, data} = useQuery<chats: {name: string, picture: string}[]>(GET_CHATS_QUERY);
+  const {loading, error, data} = useQuery<GetChatsData>(GET_CHATS_QUERY);
 
   if (loading) return <p>Loading</p>
   if (error) return <p>error</p>
