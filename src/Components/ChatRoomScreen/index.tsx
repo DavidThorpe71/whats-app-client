@@ -28,20 +28,22 @@ interface ChatQueryMessage {
   createdAt: Date;
 }
 
-interface ChatQueryData{
-  id: string;
-  name: string;
-  picture: string;
-  messages: Array<ChatQueryMessage>;
+interface ChatQueryData {
+  chat: {
+    id: string;
+    name: string;
+    picture: string;
+    messages: Array<ChatQueryMessage>;
+  }
 }
 
 const ChatRoomScreen: FC<ChatRoomScreenParams> = ({chatId}) => {
   const {loading, error, data} = useQuery<ChatQueryData, ChatRoomScreenParams>(GET_CHAT_QUERY, {variables: {chatId}});
 
   if (loading) return <p>Loading...</p>;
-  if (error || !data) return <p>Error :(</p>;
-  
-  const { picture, name, messages } = data;
+  if (error) return <p>Error :(</p>;
+  if (!data || !data.chat) return <p>No data <span role="img" aria-label="unamused">😒</span></p>
+  const {picture, name, messages} = data.chat;
   return (
     <div>
       <img src={picture} alt="Profile" />
@@ -55,7 +57,7 @@ const ChatRoomScreen: FC<ChatRoomScreenParams> = ({chatId}) => {
       ))}
       </ul>
     </div>
-  );
+  )
 }
 
 export default ChatRoomScreen;

@@ -2,13 +2,15 @@ import React, { FC, useState, useMemo } from "react";
 import moment from 'moment';
 import styled from 'styled-components';
 import { Comment, List, Tooltip, Avatar } from 'antd';
+import { useQuery } from '@apollo/react-hooks';
+import { gql } from 'apollo-boost';
 
 const Container = styled.div`
   height: calc(100% - 56px);
   overflow-y: overlay;
 `;
 
-const getChatsQuery = `
+const GET_CHATS_QUERY = gql`
   query GetChats {
     chats {
       id
@@ -24,25 +26,16 @@ const getChatsQuery = `
 `;
 
 const ChatsList: FC = () => {
-  const [chats, setChats] = useState<any[]>([]);
-  useMemo(async () => {
-    const body = await fetch(`${process.env.REACT_APP_SERVER_URL}/graphql`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ query: getChatsQuery }),
-    });
-    const {
-      data: { chats },
-    } = await body.json();
-    setChats(chats);
-  }, []);
+  const {loading, error, data} = useQuery<chats: {name: string, picture: string}[]>(GET_CHATS_QUERY);
+
+  if (loading) return <p>Loading</p>
+  if (error) return <p>error</p>
+  if (!data) return <p>no data</p>
   return (
   <Container>
     <List
       bordered
-      dataSource={chats}
+      dataSource={data.chats}
       renderItem={item => (
         <List.Item>
           <Comment
