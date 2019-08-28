@@ -19,18 +19,43 @@ const GET_CHAT_QUERY = gql`
 `;
 
 interface ChatRoomScreenParams {
-    chatId: string;
-  }
-const ChatRoomScreen: FC<ChatRoomScreenParams> = ({chatId}) => {
-    const {loading, error, data} = useQuery(GET_CHAT_QUERY, {variables: {chatId}});
+  chatId: string;
+}
 
-    if (loading) return <p>Loading...</p>;
-     if (error) return <p>Error :(</p>;
-    return (
-        <div>
-            <p>{JSON.stringify(data)}</p>
-        </div>
-    )
+interface ChatQueryMessage {
+  id: string;
+  content: string;
+  createdAt: Date;
+}
+
+interface ChatQueryData{
+  id: string;
+  name: string;
+  picture: string;
+  messages: Array<ChatQueryMessage>;
+}
+
+const ChatRoomScreen: FC<ChatRoomScreenParams> = ({chatId}) => {
+  const {loading, error, data} = useQuery<ChatQueryData, ChatRoomScreenParams>(GET_CHAT_QUERY, {variables: {chatId}});
+
+  if (loading) return <p>Loading...</p>;
+  if (error || !data) return <p>Error :(</p>;
+  
+  const { picture, name, messages } = data;
+  return (
+    <div>
+      <img src={picture} alt="Profile" />
+      <div>{name}</div>
+      <ul>
+      {messages.map(message => (
+        <li key={message.id}>
+          <div>{message.content}</div>
+          <div>{message.createdAt}</div>
+        </li>
+      ))}
+      </ul>
+    </div>
+  );
 }
 
 export default ChatRoomScreen;
