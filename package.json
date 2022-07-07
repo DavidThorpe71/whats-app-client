@@ -16,7 +16,7 @@
     "apollo-boost": "^0.4.4",
     "graphql": "^14.5.3",
     "jest-fetch-mock": "^2.1.2",
-    "moment": "^2.24.0",
+    "moment": "^2.29.4",
     "react": "^16.9.0",
     "react-dom": "^16.9.0",
     "react-router-dom": "^5.0.1",
